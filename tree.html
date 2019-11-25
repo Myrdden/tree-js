@@ -8,17 +8,56 @@
     <input type='submit'></input>
   </form>
   <script>
-    const newTree = init => {return {data: init, left: null, right: null}};
+    const newTree = init => {return {data: init, left: null, right: null, root: null}};
+
+    const leftTreeHeight = tree => tree.left ? Math.max(leftTreeHeight(tree.left), rightTreeHeight(tree.left)) + 1 : 0;
+    const rightTreeHeight = tree => tree.right ? Math.max(leftTreeHeight(tree.right), rightTreeHeight(tree.right)) + 1 : 0;
+    const calcWeight = tree => leftTreeHeight(tree) - rightTreeHeight(tree);
+
+    const rotateRight = tree => {
+      let left = tree.left;
+      left.root = tree.root;
+      if (tree.root !== null) { tree.root.left === tree ? tree.root.left = left : tree.root.right = left; }
+      tree.root = left;
+      tree.left = left.right;
+      left.right = tree;
+      return left;
+    };
+    const rotateLeft = tree => {
+      let right = tree.right;
+      right.root = tree.root;
+      if (tree.root !== null) { tree.root.left === tree ? tree.root.left = right : tree.root.right = right; }
+      tree.root = right;
+      tree.right = right.left;
+      right.left = tree;
+      return right;
+    };
+    const rotateLeftRight = tree => {rotateLeft(tree.left); return rotateRight(tree);};
+    const rotateRightLeft = tree => {rotateRight(tree.right); return rotateLeft(tree);};
+    const treeBalance = tree => {
+      let weight = calcWeight(tree);
+      if (weight > 1) {
+        let subWeight = calcWeight(tree.left);
+        if (subWeight > 0) { console.log('r');tree = rotateRight(tree); }
+        else if (subWeight < 0) { console.log('lr');tree = rotateLeftRight(tree); }
+      } else if (weight < -1) {
+        let subWeight = calcWeight(tree.right);
+        if (subWeight < 0) { console.log('l');tree = rotateLeft(tree); }
+        else if (subWeight > 0) { console.log('rl');tree = rotateRightLeft(tree); }
+      }
+      return tree.root === null ? tree : treeBalance(tree.root);
+    };
+
     const treeInsert = (data, tree, compare = null) => {
-      if (tree === null) { return {data: data, left: null, right: null}; }
+      if (tree === null) { return {data: data, left: null, right: null, root: null}; }
       let usingCompare = compare || ((a,b) => a < b ? -1 : (a > b ? 1 : 0));
       if (usingCompare(data, tree.data) === -1) {
-        if (tree.left === null) { tree.left = {data: data, left: null, right: null}; return tree; }
+        if (tree.left === null) { tree.left = {data: data, left: null, right: null, root: tree}; return treeBalance(tree); }
         else { return treeInsert(data, tree.left, compare); }
       } else if (usingCompare(data, tree.data) === 1) {
-        if (tree.right === null) { tree.right = {data: data, left: null, right: null}; return tree; }
+        if (tree.right === null) { tree.right = {data: data, left: null, right: null, root: tree}; return treeBalance(tree); }
         else { return treeInsert(data, tree.right, compare); }
-      } else { return tree }
+      } else { return treeBalance(tree); }
     };
     const treeToAry = tree => {
       if (tree === null) { return []; }
@@ -36,7 +75,7 @@
       event.preventDefault();
       let form = new FormData(event.target);
       let num = form.get('num');
-      treeInsert(parseInt(num), tree);
+      tree = treeInsert(parseInt(num), tree);
       showTree();
     };
     showTree();
