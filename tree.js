@@ -1,9 +1,8 @@
-function Tree(data, root = null) {
-  this.data = data; this.root = root; this.left = null; this.right = null;
+function Tree(data = null, compare = null) {
+  this.data = data; this.root = null; this.left = null; this.right = null;
+  this.compare = compare || ((a,b) => a < b ? -1 : (a > b ? 1 : 0));
   this._swap = swap => {
-    console.log('swap');
-    console.log(swap);
-    let old = new Tree(this.data, this.root);
+    let old = new Tree(this.data, this.compare); old.root = this.root;
     if (this.root !== null) { this.root.left === this ? this.root.left = old : this.root.right = old; }
     old.left = this.left;
     if (this.left !== null) { this.left.root = old; }
@@ -15,29 +14,28 @@ function Tree(data, root = null) {
     if (swap.left !== null) { swap.left.root = this; }
     this.right = swap.right;
     if (swap.right !== null) { swap.right.root = this; }
-    // delete swap;
   };
 
-  this._treeToAry = tree => {
   this.toAry = () => this._treeToAry(this);
+  this._treeToAry = tree => {
     if (tree === null) { return []; }
     return [...this._treeToAry(tree.left), tree.data, ...this._treeToAry(tree.right)];
   };
 
-  this.insert = (data, compare = null) => {
-    this._insert(data, compare);
+  this.push = data => {
+    this._push(data);
     let swap = this._balance();
     if (this.data !== swap.data) { this._swap(swap); }
+    return this;
   };
-  this._insert = (data, compare = null) => {
+  this._push = data => {
     if (this.data === null) { this.data = data; return this; }
-    let usingCompare = compare || ((a,b) => a < b ? -1 : (a > b ? 1 : 0));
-    if (usingCompare(data, this.data) === -1) {
-      if (this.left === null) { this.left = new Tree(data, this); }
-      else { this.left._insert(data, compare); }
-    } else if (usingCompare(data, this.data) === 1) {
-      if (this.right === null) { this.right = new Tree(data, this); }
-      else { this.right._insert(data, compare); }
+    if (this.compare(data, this.data) === -1) {
+      if (this.left === null) { this.left = new Tree(data, this.compare); this.left.root = this; }
+      else { this.left._push(data); }
+    } else if (this.compare(data, this.data) === 1) {
+      if (this.right === null) { this.right = new Tree(data, this.compare); this.right.root = this; }
+      else { this.right._push(data); }
     } else { return this; }
     return this;
   };

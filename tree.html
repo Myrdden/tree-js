@@ -19,7 +19,7 @@
       event.preventDefault();
       let form = new FormData(event.target);
       let num = form.get('num');
-      tree.insert(parseInt(num));
+      tree.push(parseInt(num));
       showTree();
     };
     showTree();
