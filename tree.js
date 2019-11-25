@@ -80,4 +80,10 @@ function Tree(data = null, compare = null) {
   };
 };
 
+Array.prototype.toTree = function(compare = null) {
+  let tree = new Tree(null, compare);
+  this.forEach(elem => tree.push(elem));
+  return tree;
+};
+
 if (typeof module !== 'undefined') { module.exports = Tree; }
