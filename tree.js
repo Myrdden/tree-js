@@ -99,6 +99,12 @@ function Tree(data = null, compare = null) {
       }
       return false;
     },
+
+    update: (oldData, newData) => {
+      if (this.pop(oldData)) {
+        this.push(newData);
+        return true;
+      } else { return false; }
     },
 
     _leftTreeHeight: () => this.left !== null ? Math.max(this.left._leftTreeHeight(), this.left._rightTreeHeight()) + 1 : 0,

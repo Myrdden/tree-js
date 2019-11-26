@@ -2,13 +2,21 @@
 
 </head>
 <body>
+  <h4>Add</h4>
   <p id='output'></p>
   <form id='insert-form' onsubmit='return doInsert(event)'>
     <input type='text' name='num'></input>
     <input type='submit'></input>
   </form>
+  <h4>Delete</h4>
   <form id='delete-form' onsubmit='return doDelete(event)'>
     <input type='text' name='num'></input>
+    <input type='submit'></input>
+  </form>
+  <h4>Update</h4>
+  <form id='update-form' onsubmit='return doUpdate(event)'>
+    <input type='text' name='oldNum' placeholder='old'></input>
+    <input type='text' name='newNum' placeholder='new'></input>
     <input type='submit'></input>
   </form>
   <script src='tree.js'></script>
@@ -31,6 +39,14 @@
       let form = new FormData(event.target);
       let num = form.get('num');
       tree.pop(parseInt(num));
+      showTree();
+    };
+    const doUpdate = event => {
+      event.preventDefault();
+      let form = new FormData(event.target);
+      let oldNum = form.get('oldNum');
+      let newNum = form.get('newNum');
+      tree.update(parseInt(oldNum), parseInt(newNum));
       showTree();
     };
     showTree();
