@@ -55,7 +55,7 @@ function Tree(data = null, compare = null) {
             this.root.left === this ? this.root.left = null : this.root.right = null;
             this.root = null;
           }
-        else {
+        } else {
           this.data = this.right.data;
           if (this.right.left !== null) { this.right.left.root = this; }
           if (this.right.right !== null) { this.right.right.root = this; }
@@ -70,10 +70,16 @@ function Tree(data = null, compare = null) {
         let leftest = this.right;
         while (leftest.left !== null) { leftest = leftest.left; }
         this.data = leftest.data;
-        if (leftest.right !== null) { leftest.root.left = leftest.right; leftest.right.root = leftest.root; }
-        leftest.right = null; leftest.root = null;
+        if (leftest.right !== null) { 
+          leftest.root.left = leftest.right;
+          leftest.right.root = leftest.root;
+          leftest.right = null;
+        } else {
+          leftest.root.left = null;
+        }
+        leftest.root = null;
       }
-    } else if (this.data < data) {
+    } else if (this.data > data) {
       if (this.left !== null) { this.left._pop(data); }
     } else {
       if (this.right !== null) { this.right._pop(data); }

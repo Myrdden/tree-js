@@ -7,6 +7,10 @@
     <input type='text' name='num'></input>
     <input type='submit'></input>
   </form>
+  <form id='delete-form' onsubmit='return doDelete(event)'>
+    <input type='text' name='num'></input>
+    <input type='submit'></input>
+  </form>
   <script src='tree.js'></script>
   <script>
     let tree = [1,3,5,7,2,4,6,8].toTree();
@@ -20,6 +24,13 @@
       let form = new FormData(event.target);
       let num = form.get('num');
       tree.push(parseInt(num));
+      showTree();
+    };
+    const doDelete = event => {
+      event.preventDefault();
+      let form = new FormData(event.target);
+      let num = form.get('num');
+      tree.pop(parseInt(num));
       showTree();
     };
     showTree();
