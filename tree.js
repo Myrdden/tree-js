@@ -1,7 +1,7 @@
 function Tree(data = null, compare = null) {
   this.data = data; this.root = null; this.left = null; this.right = null;
+  this.compare = compare || ((a,b) => a < b ? -1 : (a > b ? 1 : (a === b ? 0 : -2)));
   this.__proto__ = {
-    compare: compare || ((a,b) => a < b ? -1 : (a > b ? 1 : 0)),
     _swap: swap => {
       let old = new Tree(this.data, this.compare); old.root = this.root;
       if (this.root !== null) { this.root.left === this ? this.root.left = old : this.root.right = old; }
@@ -42,11 +42,10 @@ function Tree(data = null, compare = null) {
     },
 
     pop: data => {
-      this._pop(data);
-      console.log(this);
+      let success = this._pop(data);
       let swap = this._balance();
       if (this.data !== swap.data) { this._swap(swap); }
-      return this;
+      return success;
     },
     _pop: data => {
       if (this.data === data) {
@@ -81,11 +80,14 @@ function Tree(data = null, compare = null) {
           }
           leftest.root = null;
         }
+        return true;
       } else if (this.data > data) {
-        if (this.left !== null) { this.left._pop(data); }
+        if (this.left !== null) { return this.left._pop(data); }
       } else {
-        if (this.right !== null) { this.right._pop(data); }
+        if (this.right !== null) { return this.right._pop(data); }
       }
+      return false;
+    },
     },
 
     _leftTreeHeight: () => this.left !== null ? Math.max(this.left._leftTreeHeight(), this.left._rightTreeHeight()) + 1 : 0,
