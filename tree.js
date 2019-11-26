@@ -17,10 +17,21 @@ function Tree(data = null, compare = null) {
       if (swap.right !== null) { swap.right.root = this; }
     },
 
-    toAry: () => this._treeToAry(this),
-    _treeToAry: tree => {
+    toAry: () => this._inOrder(this),
+    inOrder: () => this._inOrder(this),
+    _inOrder: tree => {
       if (tree === null) { return []; }
-      return [...this._treeToAry(tree.left), tree.data, ...this._treeToAry(tree.right)];
+      return [...this._inOrder(tree.left), tree.data, ...this._inOrder(tree.right)];
+    },
+    preOrder: () => this._preOrder(this),
+    _preOrder: tree => {
+      if (tree === null) { return []; }
+      return [tree.data, ...this._preOrder(tree.left), ...this._preOrder(tree.right)];
+    },
+    postOrder: () => this._postOrder(this),
+    _postOrder: tree => {
+      if (tree === null) { return []; }
+      return [...this._postOrder(tree.left), ...this._postOrder(tree.right), tree.data];
     },
 
     push: data => {
