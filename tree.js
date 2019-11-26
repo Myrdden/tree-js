@@ -40,6 +40,46 @@ function Tree(data = null, compare = null) {
     return this;
   };
 
+  this.pop = data => {
+    this._pop(data);
+    let swap = this._balance();
+    if (this.data !== swap.data) { this._swap(swap); }
+    return this;
+  };
+  this._pop = data => {
+    if (this.data === data) {
+      if (this.left === null ) {
+        if (this.right === null) {
+          if (this.root === null) { this.data = null; }
+          else {
+            this.root.left === this ? this.root.left = null : this.root.right = null;
+            this.root = null;
+          }
+        else {
+          this.data = this.right.data;
+          if (this.right.left !== null) { this.right.left.root = this; }
+          if (this.right.right !== null) { this.right.right.root = this; }
+          this.left = this.right.left; this.right = this.right.right;
+        }
+      } else if (this.right === null) {
+        this.data = this.left.data;
+        if (this.left.left !== null) { this.left.left.root = this; }
+        if (this.left.right !== null) { this.left.right.root = this; }
+        this.right = this.left.right; this.left = this.left.left;
+      } else {
+        let leftest = this.right;
+        while (leftest.left !== null) { leftest = leftest.left; }
+        this.data = leftest.data;
+        if (leftest.right !== null) { leftest.root.left = leftest.right; leftest.right.root = leftest.root; }
+        leftest.right = null; leftest.root = null;
+      }
+    } else if (this.data < data) {
+      if (this.left !== null) { this.left._pop(data); }
+    } else {
+      if (this.right !== null) { this.right._pop(data); }
+    }
+  };
+
   this._leftTreeHeight = () => this.left !== null ? Math.max(this.left._leftTreeHeight(), this.left._rightTreeHeight()) + 1 : 0;
   this._rightTreeHeight = () => this.right !== null ? Math.max(this.right._leftTreeHeight(), this.right._rightTreeHeight()) + 1 : 0;
   this._calcWeight = () => this._leftTreeHeight() - this._rightTreeHeight();
